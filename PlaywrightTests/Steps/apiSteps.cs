@@ -10,7 +10,7 @@ using Microsoft.Extensions.Configuration;
 public class ApiSteps
 {
     private readonly HttpClient _client = new();
-    private string _accessKey = "wrongAcessKey"; 
+    private string _accessKey = "95ad8a81f0dc59d8e99c256cd9c0404f"; 
     private string _baseUrl;
     private HttpResponseMessage? _response;
     private JsonDocument? _jsonBody;
@@ -20,10 +20,42 @@ public class ApiSteps
         _baseUrl = ConfigReader.GetJsonKeyValue("BaseUrl");
     }
 
-    [Given("I entered the valid access key")]
-    public void Given_I_Entered_The_Valid_AccessKey()
+    [Given(@"I entered the ""(.*)"" access key")]
+    public void Given_I_Entered_The_Valid_AccessKey(string access_key)
     {
-        _accessKey = ConfigReader.GetJsonKeyValue("accessKey"); 
+        if(access_key == "valid")
+            _accessKey = ConfigReader.GetJsonKeyValue("accessKey"); 
+    }
+
+    [Then(@"I see ""(.*)"" error in response")]
+    public void And_I_See_Error_In_Response(string errorType)   
+    {
+        var actualValue = _jsonBody.RootElement.GetProperty("error");
+        var errorCodeReceived = actualValue.GetProperty("code").GetInt32();
+        var errorTypeReceived = actualValue.GetProperty("type").GetString();
+        var errorInfoReceived = actualValue.GetProperty("info").GetString();
+
+        Console.WriteLine($"Error info : {errorInfoReceived}");
+
+
+            switch (errorType)
+            {
+                case "invalid_access_key":
+                    Assert.That(errorCodeReceived, Is.EqualTo(101));
+                    Assert.That(errorTypeReceived, Is.EqualTo("invalid_access_key"));
+                    Assert.That(errorInfoReceived, Is.EqualTo("You have not supplied a valid API Access Key. [Technical Support: support@apilayer.com]"));
+                    break;
+
+                case "invalid_currency_codes":
+                    Assert.That(errorCodeReceived, Is.EqualTo(202));
+                    Assert.That(errorTypeReceived, Is.EqualTo("invalid_currency_codes"));
+                    Assert.That(errorInfoReceived, Is.EqualTo("You have provided one or more invalid Currency Codes. [Required format: currencies=EUR,USD,GBP,...]"));
+                    break;
+
+                default:
+                    Assert.Fail($"Unexpected error type: {errorType}");
+                    break;
+            }
     }
 
     [When(@"I send GET request with base as ""(.*)"" and symbols as ""(.*)""")]
