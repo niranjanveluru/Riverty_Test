@@ -1,0 +1,20 @@
+    Scenario: Fetch the exchange rates for all countries
+        Given I entered the valid access key
+        When I send GET request without currency codes
+        Then I should get response code as 200 
+        And I see list of currency codes with exchange rates
+        And I see "success" in response body as boolean value "true"
+
+    Scenario: Fetch the exchange rates with expired access key
+        Given I entered the expired access key
+        When I send GET request with base as EUR and symbols as GBP
+        Then I should get response code as 200 
+        And I see "success" in response body as boolean value "false"
+        And I see response contains error info as 'Your monthly API request volume has been reached. Please upgrade your plan'
+
+    Scenario: Convert amount from currencies
+        Given I entered the valid access key
+        When I send GET request from EUR to GBP with an amount of 25
+        Then I should get response code as 200 
+        And I see "success" in response body as boolean value "true"
+        And I see response contains converted amount along with historical data

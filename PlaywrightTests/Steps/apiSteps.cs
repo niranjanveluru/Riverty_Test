@@ -112,7 +112,7 @@ public class ApiSteps
     public void Then_I_See_JsonObject_Contains_Key(string jsonObjectName, string expectedKey)
     {
         var jsonObject = _jsonBody.RootElement.GetProperty(jsonObjectName);
-
+        expectedKey = expectedKey.Trim().Trim('"');
         if (jsonObject.ValueKind != JsonValueKind.Object)
            Assert.Fail(jsonObjectName + " is not a JSON object");
 
