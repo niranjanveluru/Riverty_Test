@@ -12,12 +12,12 @@ PlaywrightTests/
 │   └── ApiSteps.cs           # Step definitions for API scenarios
 ├── Helpers/
 │   └── ExtentReportHelper.cs # report and logging setup
+│   └── Hooks.cs              # Reqnroll hooks for extended reporting   
 ├── Features/
 │   └── api.feature           # BDD scenarios
 ├── TestResults/
 │   └── ExtentReport.html     #  HTML report
 ├── appsettings.json          # Config file with base URL and access key
-└── Hooks.cs                  # Reqnroll hooks for extended reporting
 ```
 
 ---
